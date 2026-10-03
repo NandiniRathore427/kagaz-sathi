@@ -27,10 +27,6 @@ const fileGallery=$("fileGallery"), fileCamera=$("fileCamera");
 let imageB64=null, imageUrl=null, current=null, timer=null;
 
 /* chips */
-Object.keys(SAMPLES).forEach(k=>{
-  const b=document.createElement("button"); b.className="chip"; b.type="button"; b.textContent=k;
-  b.onclick=()=>run(SAMPLES[k]); $("chips").appendChild(b);
-});
 
 /* file handling */
 [fileGallery,fileCamera].forEach(i=>i.addEventListener("change",e=>pick(e.target.files[0])));
@@ -42,12 +38,12 @@ $("rm").onclick=clearPick;
 
 async function pick(f){
   if(!f) return; hideError();
-  if(!f.type.startsWith("image/")) return showError("Please choose a photo (JPG or PNG).");
+  if(!f.type.startsWith("image/")) return showError(tr("errType"));
   try{
     const r=await compress(f,1600,.85);
     imageB64=r.b64; imageUrl=r.url; $("thumb").src=r.url; $("fname").textContent=f.name;
     $("thumbWrap").style.display="flex"; $("go").disabled=false;
-  }catch{ showError("We couldn't open that photo. Try another one."); }
+  }catch{ showError(tr("errOpen")); }
 }
 function clearPick(){imageB64=imageUrl=null;fileGallery.value=fileCamera.value="";$("thumbWrap").style.display="none";$("go").disabled=true}
 function compress(file,max,q){return new Promise((res,rej)=>{
@@ -58,11 +54,11 @@ function compress(file,max,q){return new Promise((res,rej)=>{
   img.onerror=rej;img.src=src;})}
 
 /* run */
-$("go").onclick=()=>run(null);
+$("go").onclick=()=>{lastSample=-1;run(null)};
 async function run(sample){
   hideError(); speechSynthesis.cancel();
   $("home").style.display="none"; $("result").style.display="none"; $("loading").style.display="block";
-  const msgs=["Reading your document…","Finding amounts and dates…","Writing it in plain English…"]; let i=0;
+  const msgs=tr("msgs"); let i=0;
   $("msg").textContent=msgs[0]; timer=setInterval(()=>{$("msg").textContent=msgs[++i%msgs.length]},1400);
   window.scrollTo(0,0);
   try{
@@ -70,21 +66,21 @@ async function run(sample){
     if(sample||USE_DEMO){ await wait(2800); data=sample||SAMPLES["Electricity bill"]; }
     else{
       const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({image:imageB64,mimeType:"image/jpeg",language:"en"})});
+        body:JSON.stringify({image:imageB64,mimeType:"image/jpeg",language:lang})});
       if(!r.ok) throw 0; data=await r.json();
     }
     show(data, sample?null:imageUrl);
   }catch{
     clearInterval(timer); $("loading").style.display="none"; $("home").style.display="block";
-    showError("We couldn't get an answer just now. Check your internet and try again.");
+    showError(tr("errNet"));
   }
 }
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 
 function show(d,img){
   clearInterval(timer); current=d; $("loading").style.display="none";
-  $("rTitle").textContent=d.title||"Your document"; $("rSummary").textContent=d.summary||"";
-  $("rAmount").textContent=d.amount||"Not mentioned"; $("rDeadline").textContent=d.deadline||"Not mentioned";
+  $("rTitle").textContent=d.title||tr("yourDoc"); $("rSummary").textContent=d.summary||"";
+  $("rAmount").textContent=d.amount||tr("notMentioned"); $("rDeadline").textContent=d.deadline||tr("notMentioned");
   $("rLeft").textContent=daysLeft(d.deadlineISO);
   $("docpane").innerHTML = img ? '<img alt="Your uploaded document">' :
     '<div class="paper"><div class="t h"></div><div class="t"></div><div class="mk" style="width:50%"></div><div class="t" style="width:75%"></div><div class="t"></div><div class="mk" style="width:60%"></div><div class="t" style="width:40%"></div></div>';
@@ -106,16 +102,16 @@ function show(d,img){
 function daysLeft(iso){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(iso||"")) return "";
   const t=new Date();t.setHours(0,0,0,0);const n=Math.round((new Date(iso+"T00:00:00")-t)/864e5);
-  return n<0?Math.abs(n)+" days overdue":n===0?"Due today":n===1?"1 day left":n+" days left";
+  return n<0?tr("overdue",Math.abs(n)):n===0?tr("today"):n===1?tr("oneLeft"):tr("left",n);
 }
 $("again").onclick=()=>{speechSynthesis.cancel();$("result").style.display="none";$("home").style.display="block";clearPick();window.scrollTo(0,0)};
 
 /* voice + copy */
-function plain(){const d=current;return [d.title,d.summary,d.amount&&"Amount: "+d.amount,d.deadline&&"Deadline: "+d.deadline,
-  "What to do:",...(d.steps||[]).map((s,i)=>(i+1)+". "+s),d.caution&&"Watch out: "+d.caution].filter(Boolean).join("\n")}
-$("speak").onclick=()=>{if(!current)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(plain().replace(/\n/g,". "));u.lang="en-IN";u.rate=.95;speechSynthesis.speak(u)};
+function plain(){const d=current;return [d.title,d.summary,d.amount&&tr("lblAmount")+": "+d.amount,d.deadline&&tr("lblDeadline")+": "+d.deadline,
+  tr("lblWhat"),...(d.steps||[]).map((s,i)=>(i+1)+". "+s),d.caution&&tr("lblWatch")+d.caution].filter(Boolean).join("\n")}
+$("speak").onclick=()=>{if(!current)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(plain().replace(/\n/g,". "));u.lang=lang==="hi"?"hi-IN":"en-IN";u.rate=.95;speechSynthesis.speak(u)};
 $("stop").onclick=()=>speechSynthesis.cancel();
-$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(plain());$("copy").textContent="Copied ✓";setTimeout(()=>$("copy").textContent="Copy summary",1800)}catch{}};
+$("copy").onclick=async()=>{try{await navigator.clipboard.writeText(plain());$("copy").textContent=tr("copied");setTimeout(()=>$("copy").textContent=tr("copy"),1800)}catch{}};
 
 function showError(m){const e=$("error");e.textContent=m;e.style.display="block"}
 function hideError(){$("error").style.display="none"}
@@ -145,7 +141,7 @@ function confetti(){const c=["#D63A2A","#FFE27A","#1B7A53","#6C8CFF","#111A3B"];
     document.body.appendChild(s);setTimeout(()=>s.remove(),1800)}}
 function updateProg(celebrate){const cb=[...document.querySelectorAll("#rSteps input")],n=cb.filter(c=>c.checked).length,t=cb.length;
   $("progBar").style.width=(t?n/t*100:0)+"%";
-  $("progTxt").textContent=t&&n===t?"All done. Nice work! 🎉":n+" of "+t+" steps done";
+  $("progTxt").textContent=t&&n===t?tr("allDone"):tr("stepsDone",n,t);
   if(celebrate&&t&&n===t&&!matchMedia("(prefers-reduced-motion: reduce)").matches)confetti()}
 $("rSteps").addEventListener("click",()=>setTimeout(()=>updateProg(true),0));
 

@@ -1,8 +1,8 @@
 :root{
   --bg:#F2F4FA; --surface:#fff; --ink:#111A3B; --soft:#55608A; --line:#D9DFEF;
   --stamp:#D63A2A; --stamp-bg:#FDECEA; --mark:#FFE27A; --ok:#1B7A53; --ok-bg:#E5F4EC;
-  --head:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
-  --body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --head:"Bricolage Grotesque","Noto Sans Devanagari","Segoe UI",system-ui,sans-serif;
+  --body:"Source Sans 3","Noto Sans Devanagari","Segoe UI",system-ui,sans-serif;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -135,3 +135,13 @@ nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);background:color
 [data-theme=dark] .caution{background:#3A3216}
 [data-theme=dark] .fact.due{border-color:#6B2C33}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Language switch + Hindi typography ===== */
+.seg{display:flex;border:1px solid var(--line);border-radius:99px;overflow:hidden;background:var(--surface)}
+.seg button{border:0;background:none;padding:0 14px;min-height:42px;font-weight:700;font-size:15px;cursor:pointer;color:var(--soft)}
+.seg button[aria-pressed=true]{background:var(--ink);color:#fff}
+[data-theme=dark] .seg button[aria-pressed=true]{color:#0D1226}
+[lang=hi] h1{line-height:1.3;letter-spacing:0}
+[lang=hi] .rhead h2,[lang=hi] .how h2,[lang=hi] h3{line-height:1.35;letter-spacing:0}
+[lang=hi] .btn,[lang=hi] .drop b{line-height:1.4}
+@media(max-width:520px){.pill{display:none}}

@@ -3,7 +3,7 @@
 // Out: { title, summary, amount, deadline, deadlineISO, steps[], caution }
 // The Gemini key lives only in the GEMINI_API_KEY environment variable.
 
-const MODEL = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+const MODEL = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 const ALLOWED = ["image/jpeg", "image/png", "image/webp"];
 const MAX_B64 = 4_000_000; // ~3 MB image, under Vercel's 4.5 MB body limit
 

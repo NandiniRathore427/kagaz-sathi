@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kagaz Saathi – Understand any official paper in seconds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Source+Sans+3:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="logo"><i data-i="mark">K</i><span data-i="brand">Kagaz Saathi</span></div>
+    <div style="display:flex;gap:10px;align-items:center"><span class="pill" data-i="pill">Free · No sign-up</span><div class="seg" role="group" aria-label="Language"><button type="button" data-l="en" onclick="setLang('en')">EN</button><button type="button" data-l="hi" onclick="setLang('hi')">हिं</button></div><button id="theme" class="icon" type="button" aria-label="Toggle dark mode">🌙</button></div>
+  </nav>
+
+  <main id="home">
+    <section class="hero">
+      <div>
+        <h1 data-i="h1">Understand any official paper in seconds.</h1>
+        <p class="lead" data-i="lead">Bills, notices, forms, letters. Take a photo and get what it is, what you owe, the deadline, and exactly what to do next.</p>
+
+        <div class="card">
+          <div id="error" role="alert"></div>
+          <label class="drop" id="drop" for="fileGallery">
+            <b data-i="drop1">Drop a photo here</b>
+            <span data-i="drop2">or choose one from your phone or computer</span>
+          </label>
+          <input type="file" id="fileGallery" accept="image/*">
+          <input type="file" id="fileCamera" accept="image/*" capture="environment">
+          <div id="thumbWrap"><img id="thumb" alt="Your document"><span id="fname"></span><button id="rm" type="button" data-i="remove">Remove</button></div>
+          <div class="row">
+            <button class="btn alt" type="button" onclick="fileCamera.click()" data-i="camera">📷 Take photo</button>
+            <button class="btn alt" type="button" onclick="fileGallery.click()" data-i="gallery">🖼 Choose file</button>
+            <button class="btn go" id="go" disabled data-i="go">Explain this document</button>
+          </div>
+          <div class="samples"><span data-i="samples">No document handy? Try a sample:</span>
+            <div id="chips"></div>
+          </div>
+        </div>
+        <p class="trust" data-i="trust">🔒 Your photo is used only to read it. We don't keep it.</p>
+      </div>
+
+      <div class="paper" aria-hidden="true">
+        <div class="t h"></div><div class="t"></div><div class="t" style="width:80%"></div>
+        <div class="mk" style="width:48%"></div>
+        <div class="t"></div><div class="t" style="width:70%"></div>
+        <div class="mk" style="width:62%"></div>
+        <div class="t"></div><div class="t" style="width:40%"></div>
+        <span class="tag a" data-i="tagA">Amount due: ₹1,840</span>
+        <span class="tag b" data-i="tagB">Pay by 15 Oct</span>
+        <span class="tag c" data-i="tagC">✓ In plain English</span>
+      </div>
+    </section>
+
+    <section class="how">
+      <h2 data-i="howH">How it works</h2>
+      <div class="steps3">
+        <div class="card"><span class="n">1</span><b data-i="s1t">Snap it</b><span data-i="s1d">Take a photo or upload one. A little blur is fine.</span></div>
+        <div class="card"><span class="n">2</span><b data-i="s2t">We read it</b><span data-i="s2d">AI finds the amounts, dates and what's being asked of you.</span></div>
+        <div class="card"><span class="n">3</span><b data-i="s3t">You know what to do</b><span data-i="s3d">Get a checklist, hear it read aloud, set a reminder.</span></div>
+      </div>
+    </section>
+  </main>
+
+  <section id="loading" role="status" aria-live="polite">
+    <div class="scan"></div>
+    <div id="msg">Reading your document…</div>
+  </section>
+
+  <section id="result" aria-live="polite">
+    <button class="back" id="again" type="button" data-i="again">← Scan another document</button>
+    <div class="rgrid">
+      <div class="docpane" id="docpane"></div>
+      <div>
+        <div class="rhead"><h2 id="rTitle"></h2><div class="stamp" data-i="stamp">EXPLAINED</div></div>
+        <p id="rSummary" style="margin:0"></p>
+        <div class="facts">
+          <div class="fact"><small data-i="lblAmount">Amount</small><b id="rAmount"></b></div>
+          <div class="fact due"><small data-i="lblDeadline">Deadline</small><b id="rDeadline"></b><em id="rLeft"></em></div>
+        </div>
+        <h3 data-i="todoH" style="font:800 22px var(--head);margin:6px 0 10px">What you need to do</h3>
+        <div class="prog"><i id="progBar"></i></div><p class="ptxt" id="progTxt"></p>
+        <ul class="todo" id="rSteps"></ul>
+        <div class="caution" id="rCautionBox"><b data-i="watch">Watch out</b><br><span id="rCaution"></span></div>
+        <div class="row actions">
+          <button class="btn" id="speak" type="button" data-i="speak">🔊 Read aloud</button>
+          <button class="btn alt" id="stop" type="button" data-i="stop">Stop</button>
+          <a class="btn alt" id="remind" target="_blank" rel="noopener" style="display:none" data-i="remind">📅 Remind me</a>
+          <button class="btn alt" id="copy" type="button" data-i="copy">Copy summary</button>
+        </div>
+        <p class="disclaimer" data-i="disclaimer">Kagaz Saathi helps you understand a document. For payments or legal decisions, confirm with the issuing office.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer data-i="footer">Kagaz Saathi · Built for Hacktoberfest 2026 Hack Day · Open source</footer>
+</div>
+
+<script src="lang.js" defer></script>
+<script src="script.js" defer></script>
+</body>
+</html>

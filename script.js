@@ -1,5 +1,5 @@
 /* ===== SETTINGS: set USE_DEMO=false once the backend is live ===== */
-const USE_DEMO = true;
+const USE_DEMO = false;
 const API_URL = "/api/explain";
 /* Request : { image: base64, mimeType: "image/jpeg", language: "en" }
    Response: { title, summary, amount, deadline, deadlineISO|null, steps[], caution } */
